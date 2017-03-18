@@ -3,6 +3,27 @@ import requests
 from bs4 import BeautifulSoup
 
 
+def straightBet(s):
+	url = "http://888east.com/wager/CreateSports.aspx?WT=0"
+	user = {"User-Agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_11_5) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/55.0.2883.95 Safari/537.36"}
+	r = s.get(url,headers=user, timeout=5, cookies=s.cookies)
+	data = r.text
+	soup = BeautifulSoup(data,"html.parser")
+
+	games = {}
+	for eachGame in soup.find_all("table",{"cellpadding":"5"}):
+		for game in eachGame.find_all("tr"):
+			gameID = game.find_all("input",{"type":"checkbox"})
+			gameName = game.find_all("span",{"class":"link"})
+			if gameID:
+				if "checkbox" in str(gameID[0]):
+					print(gameName[0].text)
+					games[gameName[0].text] = gameID[0].get('name')
+
+	chosenGame = input("Which game? ")
+
+	
+
 def getdata(s):
 	mainURL = "http://888east.com/wager/Message.aspx"
 	user = {"User-Agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_11_5) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/55.0.2883.95 Safari/537.36"}
@@ -76,6 +97,10 @@ def main():
 
 	# Get data or whatever
 	getdata(s)
+
+	input("Find games? ")
+	# straight bet
+	straightBet(s)
 
 if __name__ == '__main__':
 	main()
